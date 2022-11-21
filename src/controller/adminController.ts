@@ -1,4 +1,4 @@
-import { Route, Controller, Tags, Post, Body, Get, Security, Query , FormField ,UploadedFile,UploadedFiles} from 'tsoa'
+import { Route, Controller, Tags, Post, Body, Get, Security, Query, FormField, UploadedFile, UploadedFiles } from 'tsoa'
 import { IResponse } from '../utils/interfaces.util';
 import { Request, Response } from 'express'
 import { findOne, getById, upsert, getAll } from '../helpers/db.helpers';
@@ -389,16 +389,16 @@ export default class AdminController extends Controller {
                 {
                     $limit: pageSize
                 },
-            //    {
-            //     $group:{
-            //         _id:{firstName: '$firstName' , email:'$email'},
-            //         totalCount :{ $sum:1 }
-                    
-            //     }
-            //    }
+                //    {
+                //     $group:{
+                //         _id:{firstName: '$firstName' , email:'$email'},
+                //         totalCount :{ $sum:1 }
+
+                //     }
+                //    }
             ])
-            const totalcount =  await adminModel.find().count()
-            console.log(totalcount,">>>>>>>>>>")
+            const totalcount = await adminModel.find().count()
+            console.log(totalcount, ">>>>>>>>>>")
             return {
                 data: getResponse,
                 error: '',
@@ -419,35 +419,72 @@ export default class AdminController extends Controller {
 
 
 
-        /**
- * Save a uploadMultiPic
- */
-         @Post("/uploadMultiPic")
-         public async uploadMultiPic(@FormField() fileName?:string , @UploadedFiles()  file?: Express.Multer.File[],@UploadedFiles()  testImage?: Express.Multer.File[] ): Promise<IResponse> {
-             try {
-             
-                console.log(fileName,"file")
-                console.log(file,"filessssssss")
-                console.log(testImage,"filessssssstests")
-                
-                 return {
-                     data: 'saveResponse',
-                     error: '',
-                     message: 'User registered successfully',
-                     status: 200
-                 }
-             }
-             catch (err: any) {
-                 logger.error(`${this.req.ip} ${err.message}`)
-                 return {
-                     data: null,
-                     error: err.message ? err.message : err,
-                     message: '',
-                     status: 400
-                 }
-             }
-         }
-     
+    /**
+* Save a uploadMultiPic
+*/
+    @Post("/uploadMultiPic")
+    public async uploadMultiPic(@FormField() fileName?: string, @UploadedFile() file?: Express.Multer.File[], @UploadedFile() testImage?: Express.Multer.File[]): Promise<IResponse> {
+        try {
+
+            // for (const items of file) {
+            //     console.log(items.filename, "file")
+            // }
+            // for (const items of testImage) {
+            //     console.log(items.filename, "test")
+            // }
+            console.log(file, ">>>>>>>>")
+            // console.log(testImage,">>>>>>>>222222222")
+            const saveResponse = await upsert(adminModel, { fileName, file, testImage })
+            return {
+                data: saveResponse,
+                error: '',
+                message: 'User registered successfully',
+                status: 200
+            }
+        }
+        catch (err: any) {
+            logger.error(`${this.req.ip} ${err.message}`)
+            return {
+                data: null,
+                error: err.message ? err.message : err,
+                message: '',
+                status: 400
+            }
+        }
+    }
+
+
+
+    /**
+* Save a uploadMultiPic Array
+*/
+    @Post("/uploadMultiPicArray")
+    public async uploadMultiPicArray(@FormField() fileName?: string, @UploadedFiles() pic?: Array<Express.Multer.File>): Promise<IResponse> {
+        try {
+            let names: any = [];
+            pic?.forEach(element => {
+                console.log(element, "ele")
+                names.push(element.originalname)
+            });
+            const saveResponse = await upsert(adminModel, { fileName, pic: names })
+            return {
+                data: saveResponse,
+                error: '',
+                message: 'User registered successfully',
+                status: 200
+            }
+        }
+        catch (err: any) {
+            logger.error(`${this.req.ip} ${err.message}`)
+            return {
+                data: null,
+                error: err.message ? err.message : err,
+                message: '',
+                status: 400
+            }
+        }
+    }
+
 
 
 

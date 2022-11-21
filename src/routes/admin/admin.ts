@@ -89,9 +89,9 @@ router.get('/getMyData', async (req: Request | any, res: Response) => {
 
 
 router.get('/pagination', async (req: Request | any, res: Response) => {
-    const {pageNumber , pageSize } = req.query
+    const { pageNumber, pageSize } = req.query
     const controller = new AdminController(req, res)
-    const response = await controller.pagination( pageNumber ? + pageNumber : 1, pageSize ? + pageSize : 5  );
+    const response = await controller.pagination(pageNumber ? + pageNumber : 1, pageSize ? + pageSize : 5);
     const { status } = response;
     return responseWithStatus(res, status, response)
 })
@@ -101,10 +101,18 @@ router.post('/uploadMultiPic', multerMiddleware.fields([
     { name: 'fileName' },
     { name: 'file', maxCount: 1 },
     { name: 'testImage', maxCount: 1 },
-  ]), async (req: Request | any, res: Response) => {
+]), async (req: Request | any, res: Response) => {
     const { fileName } = req.body;
     const controller = new AdminController(req, res)
-    const response = await controller.uploadMultiPic(fileName , req.files?.file as Express.Multer.File[], req.files?.testImage as Express.Multer.File[] );
+    const response = await controller.uploadMultiPic(fileName, req.files?.file as Express.Multer.File[], req.files?.testImage as Express.Multer.File[]);
+    const { status } = response;
+    return responseWithStatus(res, status, response)
+})
+
+router.post('/uploadMultiPicArray', multerMiddleware.array('pic'), async (req: Request | any, res: Response) => {
+    const { fileName } = req.body;
+    const controller = new AdminController(req, res)
+    const response = await controller.uploadMultiPicArray(fileName, req.files as Array<Express.Multer.File>);
     const { status } = response;
     return responseWithStatus(res, status, response)
 })
