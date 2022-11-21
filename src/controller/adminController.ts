@@ -423,15 +423,13 @@ export default class AdminController extends Controller {
  * Save a uploadMultiPic
  */
          @Post("/uploadMultiPic")
-         public async uploadMultiPic(@FormField() fileName:string , @UploadedFile() file: Express.Multer.File): Promise<IResponse> {
+         public async uploadMultiPic(@FormField() fileName?:string , @UploadedFiles()  file?: Express.Multer.File[],@UploadedFiles()  testImage?: Express.Multer.File[] ): Promise<IResponse> {
              try {
-                // file.forEach(element => {
-                //    console.log(element, "filePath")
-                // });
+             
+                console.log(fileName,"file")
                 console.log(file,"filessssssss")
-                console.log(fileName,"filessssssss")
-
-                //  const saveResponse = await upsert(adminModel, { fileName  })
+                console.log(testImage,"filessssssstests")
+                
                  return {
                      data: 'saveResponse',
                      error: '',

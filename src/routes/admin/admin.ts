@@ -97,14 +97,17 @@ router.get('/pagination', async (req: Request | any, res: Response) => {
 })
 
 
-router.post('/uploadMultiPic', multerMiddleware.single('file'), async (req: Request | any, res: Response) => {
+router.post('/uploadMultiPic', multerMiddleware.fields([
+    { name: 'fileName' },
+    { name: 'file', maxCount: 1 },
+    { name: 'testImage', maxCount: 1 },
+  ]), async (req: Request | any, res: Response) => {
     const { fileName } = req.body;
     const controller = new AdminController(req, res)
-    const response = await controller.uploadMultiPic(fileName , req.file as Express.Multer.File);
+    const response = await controller.uploadMultiPic(fileName , req.files?.file as Express.Multer.File[], req.files?.testImage as Express.Multer.File[] );
     const { status } = response;
     return responseWithStatus(res, status, response)
 })
-
 
 
 module.exports = router
